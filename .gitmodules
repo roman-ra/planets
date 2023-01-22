@@ -1,0 +1,12 @@
+[submodule "ext/imgui"]
+	path = ext/imgui
+	url = git@github.com:ocornut/imgui.git
+[submodule "ext/stb"]
+	path = ext/stb
+	url = git@github.com:nothings/stb.git
+[submodule "ext/simpleini"]
+	path = ext/simpleini
+	url = git@github.com:brofield/simpleini.git
+[submodule "ext/tinyobjloader"]
+	path = ext/tinyobjloader
+	url = git@github.com:tinyobjloader/tinyobjloader.git
