@@ -4,4 +4,8 @@ An attempt at writing a 3D game engine. Currently work in progress.
 
 ![Screenshot](screenshot.jpg?raw=true "Screenshot")
 
-Test scene is "Crytek Sponza" (CC BY 3.0) by Frank Meinl, Crytek.
+Test scene is "Crytek Sponza" (CC BY 3.0) by Frank Meinl, Crytek
+
+Stanford Dragon is a 3D scan made at Stanford University
+
+
