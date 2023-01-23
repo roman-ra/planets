@@ -2,6 +2,7 @@
 
 #include "SpatialObject.hpp"
 #include "Camera.hpp"
+#include "DebugUtils.hpp"
 
 #include <memory>
 
@@ -25,6 +26,7 @@ namespace planets
         void fixedUpdate();
         void draw(int viewportWidth, int viewportHeight);
 
+        DrawStats drawStats;
     private:
         std::shared_ptr<SpatialObject> m_Root;
         std::shared_ptr<Camera> m_ActiveCamera;

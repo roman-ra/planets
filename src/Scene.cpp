@@ -54,7 +54,9 @@ namespace planets
         DrawInput drawInput{
             viewProjection,
             m_ActiveCamera->getGlobalPosition(),
-            static_cast<float>(glfwGetTime())};
+            static_cast<float>(glfwGetTime())
+            
+        };
 
         glClearColor(0.f, 0.f, 0.f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -62,7 +64,9 @@ namespace planets
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
 
+        drawStats.reset();
+
         // Recursively draw the tree (DFS)
-        m_Root->draw(drawInput);
+        m_Root->draw(drawInput, drawStats);
     }
 }

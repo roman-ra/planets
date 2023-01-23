@@ -9,6 +9,7 @@
 #include <string_view>
 
 #include "Material.hpp"
+#include "DebugUtils.hpp"
 
 namespace planets
 {
@@ -45,7 +46,7 @@ namespace planets
         virtual void fixedUpdate();
         
 
-        virtual void draw(const DrawInput &drawInput);
+        virtual void draw(const DrawInput &drawInput, DrawStats &drawStats);
 
     private:
         std::string m_Name;
@@ -63,6 +64,7 @@ namespace planets
         // Cached to avoid expensive (re-)computations
         glm::mat4 m_LocalRotationM;
         glm::mat3 m_LocalRotationM3x3;
+        glm::mat3 m_WorldRotationM3x3;
 
         glm::vec3 m_LocalPosition;
         glm::vec3 m_LocalRotation; // Euler

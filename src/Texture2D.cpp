@@ -37,7 +37,7 @@ namespace planets
             break;
         case TextureDataFormat::RGBA8:
             spdlog::trace("Uploading {}x{} RGBA8 texture data to GPU", width, height);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, dataPtr);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, dataPtr);
             break;
         default:
             break;

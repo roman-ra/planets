@@ -39,9 +39,50 @@ namespace planets
             throw std::runtime_error("Length of the array of indices must be divisible by 3");
         }
 
+        spdlog::trace("Precomputing tangents for static mesh");
+
+        std::vector<std::pair<glm::vec3, size_t>> tangents(vertexNormals.size());
+        for (auto &[tangent, numSamples] : tangents)
+        {
+            tangent = glm::vec3{0.0};
+            numSamples = 0;
+        }
+
+        for (size_t i = 0; i < triangleIndices.size(); i += 3)
+        {
+            // https://learnopengl.com/Advanced-Lighting/Normal-Mapping
+            const glm::vec3 &pos1 = vertexPositions[triangleIndices[i + 0]];
+            const glm::vec3 &pos2 = vertexPositions[triangleIndices[i + 1]];
+            const glm::vec3 &pos3 = vertexPositions[triangleIndices[i + 2]];
+            const glm::vec2 &uv1 = vertexUVs[triangleIndices[i + 0]];
+            const glm::vec2 &uv2 = vertexUVs[triangleIndices[i + 1]];
+            const glm::vec2 &uv3 = vertexUVs[triangleIndices[i + 2]];
+            glm::vec3 edge1 = pos2 - pos1;
+            glm::vec3 edge2 = pos3 - pos1;
+            glm::vec2 deltaUV1 = uv2 - uv1;
+            glm::vec2 deltaUV2 = uv3 - uv1;
+
+            float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+            glm::vec3 tangent;
+            tangent.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+            tangent.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+            tangent.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+
+            tangents[triangleIndices[i + 0]].first += tangent;
+            tangents[triangleIndices[i + 0]].second++;
+            tangents[triangleIndices[i + 1]].first += tangent;
+            tangents[triangleIndices[i + 1]].second++;
+            tangents[triangleIndices[i + 2]].first += tangent;
+            tangents[triangleIndices[i + 2]].second++;
+        }
+
         for (size_t i = 0; i < vertexPositions.size(); i++)
         {
-            m_Vertices.emplace_back(vertexPositions[i], vertexNormals[i], vertexUVs[i]);
+            m_Vertices.emplace_back(vertexPositions[i],
+                                    vertexNormals[i],
+                                    glm::normalize(tangents[i].first / static_cast<float>(tangents[i].second)), // averaging
+                                    vertexUVs[i]);
         }
     }
 
@@ -110,9 +151,13 @@ namespace planets
                               reinterpret_cast<void *>(offsetof(StaticMesh::Vertex, normal)));
         glEnableVertexAttribArray(1);
 
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(StaticMesh::Vertex),
-                              reinterpret_cast<void *>(offsetof(StaticMesh::Vertex, uv)));
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(StaticMesh::Vertex),
+                              reinterpret_cast<void *>(offsetof(StaticMesh::Vertex, tangent)));
         glEnableVertexAttribArray(2);
+
+        glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(StaticMesh::Vertex),
+                              reinterpret_cast<void *>(offsetof(StaticMesh::Vertex, uv)));
+        glEnableVertexAttribArray(3);
 
         glBindVertexArray(0);
 

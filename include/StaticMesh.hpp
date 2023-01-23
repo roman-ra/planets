@@ -28,10 +28,15 @@ namespace planets
         {
             glm::vec3 position;
             glm::vec3 normal;
+            glm::vec3 tangent;
             glm::vec2 uv;
-            Vertex(const glm::vec3 &position, const glm::vec3 &normal, const glm::vec2 &uv) : position(position),
-                                                                                              normal(normal),
-                                                                                              uv(uv)
+            Vertex(const glm::vec3 &position,
+                   const glm::vec3 &normal,
+                   const glm::vec3 &tangent,
+                   const glm::vec2 &uv) : position(position),
+                                          normal(normal),
+                                          tangent(tangent),
+                                          uv(uv)
             {
             }
         };

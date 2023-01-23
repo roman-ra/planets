@@ -26,7 +26,7 @@ namespace planets
         std::shared_ptr<Material> createMaterial(const std::string &name,
                                                  std::shared_ptr<ShaderProgram> shaderProgram);
         std::shared_ptr<Material> createStandardMaterial(const std::string &name,
-                                                         std::shared_ptr<Texture2D> diffuseTexture);
+                                                         GLint flags);
         std::shared_ptr<Material> getMaterial(const std::string &name);
 
         std::shared_ptr<Texture2D> loadTexture2DFromPNG(const std::string &name,

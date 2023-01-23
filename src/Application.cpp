@@ -209,14 +209,15 @@ namespace planets
 
             cam->setLocalRotation(rot);
 
-            /*auto suzanne = m_CurrentScene->getRoot()->getChild("Suzanne");
+            auto suzanne = m_CurrentScene->getRoot()->getChild("Suzanne");
 
             
             auto sRot = suzanne->getLocalRotation();
             sRot.y += 0.01f;
+            sRot.x += 0.002f;
             suzanne->setLocalRotation(sRot);
 
-            auto suzanne1 = suzanne->getChild("Suzanne1");
+            /*auto suzanne1 = suzanne->getChild("Suzanne1");
 
             auto sRot1 = suzanne1->getLocalRotation();
             sRot1.x += 0.02f;

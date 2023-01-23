@@ -32,7 +32,7 @@ namespace planets
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-        // glfwWindowHint(GLFW_SAMPLES, 4);
+        //glfwWindowHint(GLFW_SAMPLES, 4);
 
 #ifdef __APPLE__
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -163,6 +163,9 @@ namespace planets
 
         ImGui::Begin("Runtime Stats");
         ImGui::Text("FPS: %.1lf (%.1lf ms)", m_ApplicationTimings.fps, m_ApplicationTimings.currentDelta * 1000);
+        ImGui::Text("Static meshes: %d", m_CurrentScene->drawStats.staticMeshes);
+        ImGui::Text("Lights: %d", m_CurrentScene->drawStats.lights);
+        ImGui::Text("Draw calls: %d", m_CurrentScene->drawStats.drawCalls);
         ImGui::End();
 
         if (m_DebugParams.debugConsoleActive)

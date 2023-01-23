@@ -5,6 +5,8 @@
 #include "ShaderProgram.hpp"
 #include "Material.hpp"
 
+#include "DebugUtils.hpp"
+
 #include <memory>
 
 #include <glm/glm.hpp>
@@ -19,7 +21,7 @@ namespace planets
                            std::shared_ptr<StaticMesh> mesh,
                            std::shared_ptr<Material> material);
 
-        virtual void draw(const DrawInput &drawInput) override;
+        virtual void draw(const DrawInput &drawInput, DrawStats &drawStats) override;
 
     private:
         std::shared_ptr<StaticMesh> m_Mesh;

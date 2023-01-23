@@ -11,6 +11,7 @@ d 1.000000
 illum 2
 map_Kd textures/lion.png
 map_Bump textures/lion_bump.png
+map_Kn textures/lion_normal.png
 
 newmtl Material__298
 Ns 10.000005
@@ -63,6 +64,7 @@ illum 2
 map_Kd textures/spnza_bricks_a_diff.png
 map_Ks textures/spnza_bricks_a_spec.png
 map_Bump textures/spnza_bricks_a_bump.png
+map_Kn textures/spnza_bricks_a_normal.png
 
 newmtl ceiling
 Ns 10.000005

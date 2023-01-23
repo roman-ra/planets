@@ -40,24 +40,17 @@ namespace planets
                                                                   "shaders/test_vert.glsl",
                                                                   "shaders/test_frag.glsl");
         auto testMaterial = m_ResourceManager->createMaterial("test", defaultShader);
-        /*
-        m_ResourceManager->loadStaticMesh("Suzanne",
-                                          "models/Suzanne.obj")
-            ->uploadToGPU();
 
-        m_ResourceManager->loadStaticMesh("Sponza",
-                                          "models/CrytekSponza/sponza.obj")
-            ->uploadToGPU();
+        auto tex = m_ResourceManager->loadTexture2DFromPNG("Bricks", "textures/red_brick_03_diff_2k.png");
+        auto texN = m_ResourceManager->loadTexture2DFromPNG("BricksNRM", "textures/red_brick_03_nor_gl_2k.png");
 
-        auto testMaterial = m_ResourceManager->createMaterial("test", defaultShader);
+        auto brickMat = m_ResourceManager->createStandardMaterial("BricksMat", 0);
+        (std::dynamic_pointer_cast<StandardMaterial>(brickMat))->setDiffuseMap(tex);
+        (std::dynamic_pointer_cast<StandardMaterial>(brickMat))->setNormalMap(texN);
 
-        auto tex = m_ResourceManager->loadTexture2DFromPNG("Bricks", "models/textures/red_brick_03_diff_2k.png");
+        auto suzanneMeshes = m_ResourceManager->loadStaticMesh("Suzanne",
+                                                               "models/Suzanne.obj");
 
-        auto brickMat = m_ResourceManager->createStandardMaterial("BricksMat", tex);
-
-        */
-
-        auto testMaterial2 = m_ResourceManager->createStandardMaterial("test2", m_ResourceManager->getTexture2D("NOTEXTURE"));
 
         size_t counter{0};
         auto SponzaMeshes = m_ResourceManager->loadStaticMesh("Sponza", "models/sponza_separated.obj");
@@ -71,12 +64,25 @@ namespace planets
         }
 
         // Add Suzanne
-        /*auto suzanne = scene->addObject(std::make_shared<StaticMeshInstance>("Suzanne",
-                                                                             scene->getRoot(),
-                                                                             m_ResourceManager->getStaticMesh("Suzanne"),
-                                                                             brickMat));
-        suzanne->setLocalPosition({0, 2, 0});
+        for (auto &[mesh, material] : suzanneMeshes)
+        {
+            mesh->uploadToGPU();
+            auto suzanne = scene->addObject(std::make_shared<StaticMeshInstance>("Suzanne",
+                                                                                 scene->getRoot(),
+                                                                                 mesh,
+                                                                                 brickMat));
+            suzanne->setLocalPosition({0, 2, 0});
+            suzanne->setLocalScale({0.5, 0.5, 0.5});
 
+            auto suzanne1 = suzanne->addChild(std::make_shared<StaticMeshInstance>("Suzanne1",
+                                                                                   suzanne,
+                                                                                   mesh,
+                                                                                   brickMat));
+            suzanne1->setLocalPosition({2, 0, 0});
+            suzanne1->setLocalScale({0.3, 0.3, 0.3});
+        }
+
+        /*
         auto suzanne1 = suzanne->addChild(std::make_shared<StaticMeshInstance>("Suzanne1",
                                                                                suzanne,
                                                                                m_ResourceManager->getStaticMesh("Suzanne"),

@@ -164,7 +164,7 @@ namespace planets
     }
 
     std::shared_ptr<Material> ResourceManager::createStandardMaterial(const std::string &name,
-                                                                      std::shared_ptr<Texture2D> diffuseTexture)
+                                                                      GLint flags)
     {
         spdlog::trace("Creating Standard material \"{}\"", name);
         if (m_Materials.find(name) != m_Materials.end())
@@ -172,7 +172,7 @@ namespace planets
             spdlog::warn("Material \"{}\" already exists and will be replaced", name);
         }
         std::shared_ptr<Material> mat = std::make_shared<StandardMaterial>(getShaderProgram("Standard"),
-                                                                           diffuseTexture);
+                                                                           flags);
         m_Materials[name] = mat;
         return mat;
     }
@@ -213,10 +213,34 @@ namespace planets
 
         for (size_t i = 0; i < materials.size(); i++)
         {
-            // Load diffuse texture
-            auto tex = loadTexture2DFromPNG(materials[i].diffuse_texname, materials[i].diffuse_texname);
-            // Create the actual material
-            auto material = createStandardMaterial(materials[i].name, tex);
+            const auto &objMaterial = materials[i];
+            std::shared_ptr<StandardMaterial> material = std::dynamic_pointer_cast<StandardMaterial>(createStandardMaterial(materials[i].name, 0));
+
+            // Load diffuse texture if exists
+            if (objMaterial.diffuse_texname.size() > 0)
+            {
+                spdlog::trace("Loading diffuse map");
+                auto tex = loadTexture2DFromPNG(objMaterial.diffuse_texname, objMaterial.diffuse_texname);
+                material->setDiffuseMap(tex);
+            }
+
+            glm::vec3 diffuseColor{objMaterial.diffuse[0],
+                                   objMaterial.diffuse[1],
+                                   objMaterial.diffuse[2]};
+            // To avoid getting black objects when diffuse color is missing in the MTL
+            if (glm::length(diffuseColor) > 0.01f) {
+                material->setDiffuseColor(diffuseColor);
+            }
+
+            // Load normal map if exists
+            if (objMaterial.normal_texname.size() > 0)
+            {
+                spdlog::trace("Loading diffuse map");
+                auto tex = loadTexture2DFromPNG(objMaterial.normal_texname, objMaterial.normal_texname);
+                material->setNormalMap(tex);
+            }
+            
+
             createdMaterials.push_back(material);
         }
         spdlog::trace("Loaded {} materials defined in the MTL", createdMaterials.size());

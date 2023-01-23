@@ -1,6 +1,8 @@
 #include "SpatialObject.hpp"
 #include "Material.hpp"
 
+#include "DebugUtils.hpp"
+
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 
@@ -99,12 +101,14 @@ namespace planets
     void SpatialObject::recalculateWorldMatrices() noexcept
     {
         m_LocalToWorld = m_LocalToParent;
+        m_WorldRotationM3x3 = m_LocalRotationM3x3;
 
         SpatialObject *parent = m_Parent.get();
         // Go up the tree until we find the root
         while (parent != nullptr)
         {
             m_LocalToWorld = parent->m_LocalToParent * m_LocalToWorld;
+            m_WorldRotationM3x3 = parent->m_LocalRotationM3x3 * m_WorldRotationM3x3;
             parent = parent->m_Parent.get();
         }
 
@@ -125,12 +129,12 @@ namespace planets
     {
     }
 
-    void SpatialObject::draw(const DrawInput &drawInput)
+    void SpatialObject::draw(const DrawInput &drawInput, DrawStats &drawStats)
     {
         // Don't draw self (since it's just an empty object) but draw children
         for (auto it = m_Children.begin(); it != m_Children.end(); it++)
         {
-            it->second->draw(drawInput);
+            it->second->draw(drawInput, drawStats);
         }
     }
 }
