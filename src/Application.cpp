@@ -1,6 +1,6 @@
 #include "Application.hpp"
 
-#include <glad/gl.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/string_cast.hpp>
@@ -201,7 +201,7 @@ namespace planets
 
             auto rot = cam->getLocalRotation();
 
-            float sensitivity = 0.0007f;
+            float sensitivity = 0.0005f;
             rot.x -= m_ControlParams.cursorDeltaY * sensitivity;
             rot.y -= m_ControlParams.cursorDeltaX * sensitivity;
 
@@ -209,19 +209,31 @@ namespace planets
 
             cam->setLocalRotation(rot);
 
-            auto suzanne = m_CurrentScene->getRoot()->getChild("Suzanne");
 
             
+            auto suzanne = m_CurrentScene->getRoot()->getChild("Suzanne");
+            
             auto sRot = suzanne->getLocalRotation();
-            sRot.y += 0.01f;
-            sRot.x += 0.002f;
+            sRot.y += 0.005f;
+            sRot.x += 0.0005f;
             suzanne->setLocalRotation(sRot);
 
-            /*auto suzanne1 = suzanne->getChild("Suzanne1");
+            auto sPos = suzanne->getLocalPosition();
+            sPos.y = 3.f + std::sin(m_ApplicationTimings.lastTime);
+            suzanne->setLocalPosition(sPos);
+
+            auto suzanne1 = suzanne->getChild("Suzanne1");
 
             auto sRot1 = suzanne1->getLocalRotation();
-            sRot1.x += 0.02f;
-            suzanne1->setLocalRotation(sRot1);*/
+            sRot1.x += 0.01f;
+            suzanne1->setLocalRotation(sRot1);
+
+            auto suzanne2 = suzanne1->getChild("Suzanne2");
+
+            auto sRot2 = suzanne2->getLocalRotation();
+            sRot2.z += 0.01f;
+            suzanne2->setLocalRotation(sRot2);
+            
 
             draw(m_ApplicationTimings.currentDelta);
 

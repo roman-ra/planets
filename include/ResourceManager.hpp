@@ -42,6 +42,7 @@ namespace planets
                        const std::string &objPath);
         std::shared_ptr<StaticMesh> getStaticMesh(const std::string &name) const;
 
+        void reloadStandardShader();
     private:
         std::string m_DataDirectory;
 

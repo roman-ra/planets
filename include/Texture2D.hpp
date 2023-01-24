@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glad/gl.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 namespace planets
@@ -10,8 +10,10 @@ namespace planets
     public:
         enum class TextureDataFormat
         {
+            R8,
             RGB8,
             RGBA8,
+            R_FLOAT,
             RGB_FLOAT,
             RGBA_FLOAT
         };

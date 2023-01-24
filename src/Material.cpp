@@ -25,6 +25,7 @@ namespace planets
         m_ShaderProgram->setMatrix4f("modelToWorldSpace", materialInput.modelToWorldSpace);
         m_ShaderProgram->setMatrix3f("modelToWorldSpace_Normal", materialInput.modelToWorldSpace_Normal);
         m_ShaderProgram->setVector3f("cameraWorldPosition", materialInput.cameraPosition);
+        m_ShaderProgram->setVector3f("cameraDirection", materialInput.cameraDirection);
         m_ShaderProgram->setFloat("time", materialInput.time);
     }
 
@@ -54,6 +55,9 @@ namespace planets
         m_ShaderProgram->setInt("materialFlags", m_Flags);
 
         m_ShaderProgram->setVector3f("diffuseColor", m_DiffuseColor);
+        m_ShaderProgram->setFloat("roughness", m_Roughness);
+        m_ShaderProgram->setFloat("metalness", m_Metalness);
+        m_ShaderProgram->setVector3f("emissionColor", m_EmissionColor);
 
         if (m_Flags & StandardMaterialFlags::HAS_DIFFUSE_MAP)
         {

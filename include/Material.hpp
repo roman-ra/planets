@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glad/gl.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
@@ -16,6 +16,7 @@ namespace planets
     {
         const glm::mat4 &viewProjection;
         const glm::vec3 &cameraPosition;
+        const glm::vec3 &cameraDirection;
         const GLfloat time;
     };
 
@@ -26,6 +27,7 @@ namespace planets
         const glm::mat4 &modelToWorldSpace;
         const glm::mat3 &modelToWorldSpace_Normal;
         const glm::vec3 &cameraPosition;
+        const glm::vec3 &cameraDirection;
         const GLfloat time;
     };
 
@@ -113,10 +115,32 @@ namespace planets
             m_DiffuseColor = diffuseColor;
         }
 
+        void setRoughness(GLfloat roughness)
+        {
+            m_Roughness = roughness;
+        }
+
+        void setMetalness(GLfloat metalness)
+        {
+            m_Metalness = metalness;
+        }    
+
+        void setEmissionColor(const glm::vec3 &emissionColor)
+        {
+            m_EmissionColor = emissionColor;
+        }
+        
+        void replaceProgram(std::shared_ptr<ShaderProgram> newProgram)
+        {
+            m_ShaderProgram = newProgram;
+        }
     private:
         GLint m_Flags{0};
 
         glm::vec3 m_DiffuseColor{1.f, 1.f, 1.f};
+        GLfloat m_Roughness{0.5};
+        GLfloat m_Metalness{0};
+        glm::vec3 m_EmissionColor{0.f, 0.f, 0.f};
 
         std::shared_ptr<Texture2D> m_DiffuseMap;
         std::shared_ptr<Texture2D> m_RoughnessMap;

@@ -34,6 +34,7 @@ namespace planets
         const glm::vec3 &getLocalForward() const { return m_LocalForward; }
 
         glm::vec3 getGlobalPosition() { return glm::vec3(m_LocalToWorld[3]); }
+        const glm::mat3 &getGlobalRotation() { return m_WorldRotationM3x3; }
 
         const glm::vec3 &getLocalPosition() const { return m_LocalPosition; }
         const glm::vec3 &getLocalRotation() const { return m_LocalRotation; }

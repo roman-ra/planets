@@ -1,6 +1,6 @@
 #include "Application.hpp"
 
-#include <glad/gl.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/string_cast.hpp>
@@ -45,11 +45,10 @@ namespace planets
         auto texN = m_ResourceManager->loadTexture2DFromPNG("BricksNRM", "textures/red_brick_03_nor_gl_2k.png");
 
         auto brickMat = m_ResourceManager->createStandardMaterial("BricksMat", 0);
-        (std::dynamic_pointer_cast<StandardMaterial>(brickMat))->setDiffuseMap(tex);
-        (std::dynamic_pointer_cast<StandardMaterial>(brickMat))->setNormalMap(texN);
-
-        auto suzanneMeshes = m_ResourceManager->loadStaticMesh("Suzanne",
-                                                               "models/Suzanne.obj");
+        //(std::dynamic_pointer_cast<StandardMaterial>(brickMat))->setDiffuseMap(tex);
+        //(std::dynamic_pointer_cast<StandardMaterial>(brickMat))->setNormalMap(texN);
+        (std::dynamic_pointer_cast<StandardMaterial>(brickMat))->setDiffuseColor({0.5, 0.5, 0.5});
+        (std::dynamic_pointer_cast<StandardMaterial>(brickMat))->setRoughness(0.1);
 
 
         size_t counter{0};
@@ -63,6 +62,22 @@ namespace planets
                                                                   material));
         }
 
+       
+
+        auto BarrelMeshes = m_ResourceManager->loadStaticMesh("Barrel", "models/Barrel.obj");
+        for (auto &[mesh, material] : BarrelMeshes)
+        {
+            mesh->uploadToGPU();
+            auto barrel = scene->addObject(std::make_shared<StaticMeshInstance>("Barrel" + std::to_string(counter++),
+                                                                             scene->getRoot(),
+                                                                             mesh,
+                                                                             material));
+            barrel->setLocalPosition({4, 1, 0});
+        }
+
+
+         auto suzanneMeshes = m_ResourceManager->loadStaticMesh("Suzanne",
+                                                               "models/Suzanne.obj");
         // Add Suzanne
         for (auto &[mesh, material] : suzanneMeshes)
         {
@@ -70,16 +85,23 @@ namespace planets
             auto suzanne = scene->addObject(std::make_shared<StaticMeshInstance>("Suzanne",
                                                                                  scene->getRoot(),
                                                                                  mesh,
-                                                                                 brickMat));
+                                                                                 material));
             suzanne->setLocalPosition({0, 2, 0});
-            suzanne->setLocalScale({0.5, 0.5, 0.5});
+            suzanne->setLocalScale({1, 1, 1});
 
             auto suzanne1 = suzanne->addChild(std::make_shared<StaticMeshInstance>("Suzanne1",
                                                                                    suzanne,
                                                                                    mesh,
-                                                                                   brickMat));
+                                                                                   material));
             suzanne1->setLocalPosition({2, 0, 0});
-            suzanne1->setLocalScale({0.3, 0.3, 0.3});
+            suzanne1->setLocalScale({0.7, 0.7, 0.7});
+
+            auto suzanne2 = suzanne1->addChild(std::make_shared<StaticMeshInstance>("Suzanne2",
+                                                                                    suzanne1,
+                                                                                    mesh,
+                                                                                    material));
+            suzanne2->setLocalPosition({0, 2, 0});
+            suzanne2->setLocalScale({0.7, 0.7, 0.7});
         }
 
         /*

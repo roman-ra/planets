@@ -1,6 +1,7 @@
 #include "Application.hpp"
+#include "StaticMeshInstance.hpp"
 
-#include <glad/gl.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_glfw.h>
@@ -32,7 +33,7 @@ namespace planets
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-        //glfwWindowHint(GLFW_SAMPLES, 4);
+        glfwWindowHint(GLFW_SAMPLES, 8);
 
 #ifdef __APPLE__
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -50,20 +51,20 @@ namespace planets
 
         glfwMakeContextCurrent(m_Window);
 
-        int version = gladLoadGL(glfwGetProcAddress);
+        int version = gladLoadGL();
         if (version == 0)
         {
             spdlog::critical("Failed to create window");
             throw std::runtime_error("Failed to initialize OpenGL context");
         }
 
-        if (GLAD_VERSION_MAJOR(version) != 4 || GLAD_VERSION_MINOR(version) != 6)
+        /*if (GLAD_VERSION_MAJOR(version) != 4 || GLAD_VERSION_MINOR(version) != 6)
         {
             spdlog::critical("Failed to initalize OpenGL 4.6");
             throw std::runtime_error("Failed to initalize OpenGL 4.6");
         }
 
-        spdlog::info("Initialized OpenGL {}.{}", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
+        spdlog::info("Initialized OpenGL {}.{}", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));*/
 
         m_ApplicationTimings.lastTime = glfwGetTime();
 
@@ -124,6 +125,27 @@ namespace planets
 
         ImGui::Begin("Scene Tree", NULL);
 
+        static size_t count = 0;
+        ImGui::Text("Spawn new Suzanne");
+        static glm::vec3 pos{0.0f};
+        static glm::vec3 color{1.0f};
+
+        ImGui::SliderFloat("X", &pos.x, -30.f, 30.f);
+        ImGui::SliderFloat("Y", &pos.y, -30.f, 30.f);
+        ImGui::SliderFloat("Z", &pos.z, -30.f, 30.f);
+        ImGui::ColorPicker3("Color", &color[0]);
+
+        if (ImGui::Button("Spawn"))
+        {
+            auto mtl = m_ResourceManager->createStandardMaterial("NewSuzanne" + std::to_string(count++), 0);
+            (std::dynamic_pointer_cast<StandardMaterial>(mtl))->setDiffuseColor(color);
+            auto suzanne = m_CurrentScene->addObject(std::make_shared<StaticMeshInstance>("NewSuzanne" + std::to_string(count++),
+                                                                                          m_CurrentScene->getRoot(),
+                                                                                          m_ResourceManager->getStaticMesh("Suzanne.Suzanne"),
+                                                                                          mtl));
+            suzanne->setLocalPosition(pos);
+        }
+
         drawDebugTree(m_CurrentScene->getRoot());
 
         ImGui::End();
@@ -166,6 +188,16 @@ namespace planets
         ImGui::Text("Static meshes: %d", m_CurrentScene->drawStats.staticMeshes);
         ImGui::Text("Lights: %d", m_CurrentScene->drawStats.lights);
         ImGui::Text("Draw calls: %d", m_CurrentScene->drawStats.drawCalls);
+        if (ImGui::Button("Reload Standard shader"))
+        {
+            try
+            {
+                m_ResourceManager->reloadStandardShader();
+            }
+            catch (std::exception &e)
+            {
+            }
+        }
         ImGui::End();
 
         if (m_DebugParams.debugConsoleActive)

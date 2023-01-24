@@ -29,6 +29,7 @@ namespace planets
             m_LocalToWorld,
             m_WorldRotationM3x3, // For normals
             drawInput.cameraPosition,
+            drawInput.cameraDirection,
             drawInput.time};
 
         drawStats.drawCalls++;

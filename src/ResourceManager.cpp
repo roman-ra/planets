@@ -4,7 +4,7 @@
 #include "Material.hpp"
 #include "Texture2D.hpp"
 
-#include <glad/gl.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include <unordered_map>
@@ -139,9 +139,26 @@ namespace planets
             return getTexture2D("NOTEXTURE");
         }
 
-        Texture2D::TextureDataFormat format = numChannels == 4
-                                                  ? Texture2D::TextureDataFormat::RGBA8
-                                                  : Texture2D::TextureDataFormat::RGB8;
+        Texture2D::TextureDataFormat format;
+        if (numChannels == 1)
+        {
+            format = Texture2D::TextureDataFormat::R8;
+        }
+        else if (numChannels == 3)
+        {
+            format = Texture2D::TextureDataFormat::RGB8;
+        }
+        else if (numChannels == 4)
+        {
+            format = Texture2D::TextureDataFormat::RGBA8;
+        }
+        else
+        {
+            spdlog::warn("Unsupported image format");
+            stbi_image_free(data);
+            throw std::runtime_error("Unsupported image format");
+        }
+
         std::shared_ptr<Texture2D> tex = std::make_shared<Texture2D>(static_cast<GLsizei>(width),
                                                                      static_cast<GLsizei>(height),
                                                                      reinterpret_cast<void *>(data),
@@ -219,7 +236,7 @@ namespace planets
             // Load diffuse texture if exists
             if (objMaterial.diffuse_texname.size() > 0)
             {
-                spdlog::trace("Loading diffuse map");
+                spdlog::trace("Loading diffuse map {}", objMaterial.diffuse_texname);
                 auto tex = loadTexture2DFromPNG(objMaterial.diffuse_texname, objMaterial.diffuse_texname);
                 material->setDiffuseMap(tex);
             }
@@ -228,18 +245,36 @@ namespace planets
                                    objMaterial.diffuse[1],
                                    objMaterial.diffuse[2]};
             // To avoid getting black objects when diffuse color is missing in the MTL
-            if (glm::length(diffuseColor) > 0.01f) {
+            if (glm::length(diffuseColor) > 0.01f)
+            {
                 material->setDiffuseColor(diffuseColor);
             }
 
             // Load normal map if exists
             if (objMaterial.normal_texname.size() > 0)
             {
-                spdlog::trace("Loading diffuse map");
+                spdlog::trace("Loading normal map {}", objMaterial.normal_texname);
                 auto tex = loadTexture2DFromPNG(objMaterial.normal_texname, objMaterial.normal_texname);
                 material->setNormalMap(tex);
             }
-            
+
+            // Load roughness map if exists
+            if (objMaterial.roughness_texname.size() > 0)
+            {
+                spdlog::trace("Loading rougness map {}", objMaterial.roughness_texname);
+                auto tex = loadTexture2DFromPNG(objMaterial.roughness_texname, objMaterial.roughness_texname);
+                material->setRoughnessMap(tex);
+            }
+
+            // Load metalness map if exists
+            if (objMaterial.metallic_texname.size() > 0)
+            {
+                spdlog::trace("Loading metalness map {}", objMaterial.metallic_texname);
+                auto tex = loadTexture2DFromPNG(objMaterial.metallic_texname, objMaterial.metallic_texname);
+                material->setMetalnessMap(tex);
+            }
+
+            spdlog::info("Material flags: {}", material->getFlags());
 
             createdMaterials.push_back(material);
         }
@@ -334,5 +369,18 @@ namespace planets
             throw std::runtime_error("Unable to find static mesh");
         }
         return it->second;
+    }
+
+    void ResourceManager::reloadStandardShader()
+    {
+        auto newProgram = loadShaderProgram("Standard", "shaders/Standard_vert.glsl", "shaders/Standard_frag.glsl");
+        for (auto &m : m_Materials)
+        {
+            auto sm = std::dynamic_pointer_cast<StandardMaterial>(m.second);
+            if (sm)
+            {
+                sm->replaceProgram(newProgram);
+            }
+        }
     }
 }

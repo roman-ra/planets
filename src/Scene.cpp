@@ -1,6 +1,6 @@
 #include "Scene.hpp"
 
-#include <glad/gl.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include <glm/gtx/string_cast.hpp>
@@ -54,8 +54,8 @@ namespace planets
         DrawInput drawInput{
             viewProjection,
             m_ActiveCamera->getGlobalPosition(),
+            -m_ActiveCamera->getGlobalRotation()[2],
             static_cast<float>(glfwGetTime())
-            
         };
 
         glClearColor(0.f, 0.f, 0.f, 1.f);
